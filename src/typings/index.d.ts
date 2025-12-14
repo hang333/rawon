@@ -8,7 +8,7 @@ import type { ServerQueue } from "../structures/ServerQueue.js";
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
 
 export type QueryData = {
-    sourceType?: "query" | "soundcloud" | "spotify" | "unknown" | "youtube" | "bilibili";
+    sourceType?: "bilibili" | "query" | "soundcloud" | "spotify" | "unknown" | "youtube";
     type?: "playlist" | "track" | "unknown";
     isURL: boolean;
 }
