@@ -15,6 +15,7 @@ import { enablePrefix, enableSlashCommand, lang, mainPrefix } from "./env.js";
 const intents: number[] = [
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildExpressions,
     IntentsBitField.Flags.GuildVoiceStates,
     IntentsBitField.Flags.GuildModeration,

@@ -38,6 +38,8 @@ export class ExpiredDirectMediaError extends Error {
     }
 }
 
+const BILIBILI_USER_AGENT_HEADER = "User-Agent: RyougShiki/1.0";
+
 const EXPIRED_DIRECT_MEDIA_STATUS_CODES = new Set([401, 403, 404, 410]);
 const DIRECT_MEDIA_EXT_REGEX = /\.(mp4|m4a|webm|mp3|opus|wav|flac)(\?|$)/i;
 
@@ -275,6 +277,9 @@ async function attemptStreamWithRetry(
               };
 
         const options = { ...baseOptions };
+        if (checkQuery(url).sourceType === "bilibili") {
+            options.addHeader = BILIBILI_USER_AGENT_HEADER;
+        }
 
         const proc = exec(url, options, { stdio: ["ignore", "pipe", "pipe"] });
 
@@ -503,6 +508,9 @@ async function attemptGetInfoWithRetry(
     try {
         const result = await ytdl(url, {
             dumpJson: true,
+            ...(checkQuery(url).sourceType === "bilibili"
+                ? { addHeader: BILIBILI_USER_AGENT_HEADER }
+                : {}),
         });
         return result;
     } catch (error) {
