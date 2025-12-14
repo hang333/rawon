@@ -114,6 +114,7 @@ interface YTFlags {
     geoBypass?: boolean,
     geoBypassCountry?: string,
     geoBypassIpBlock?: string,
+    addHeader?: string,
     playlistStart?: number,
     playlistEnd?: number | "last",
     playlistItems?: string,

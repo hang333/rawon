@@ -21,13 +21,17 @@ export async function getStream(client: Rawon, url: string): Promise<Readable> {
     }
 
   return new Promise<Readable>((resolve, reject) => {
+    const queryData = checkQuery(url);
+    const isBilibili = queryData.sourceType === "bilibili";
+
     const proc = exec(
       url,
       {
         output: "-",
         quiet: true,
         format: "bestaudio",
-        limitRate: "300K"
+        limitRate: "300K",
+        ...(isBilibili ? { addHeader: "User-Agent: RyougShiki/1.0" } : {})
       },
       { stdio: ["ignore", "pipe", "ignore"] }
     );
@@ -68,7 +72,11 @@ export async function getInfo(url: string): Promise<BasicYoutubeVideoInfo> {
             url: rawPlayDlVideoInfo.video_details.url
         };
     }
+    const queryData = checkQuery(url);
+    const isBilibili = queryData.sourceType === "bilibili";
+
     return ytdl(url, {
-        dumpJson: true
+        dumpJson: true,
+        ...(isBilibili ? { addHeader: "User-Agent: RyougShiki/1.0" } : {})
     });
 }

@@ -13,11 +13,6 @@ services:
     env_file: .env
     networks:
       - net
-    volumes:
-      - rawon:/app/scripts
 
 networks:
   net:
-
-volumes:
-  rawon:

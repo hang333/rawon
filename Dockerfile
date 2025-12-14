@@ -27,8 +27,13 @@ FROM ghcr.io/hazmi35/node:24-alpine
 LABEL name "rawon"
 LABEL maintainer "Stegripe Development <support@stegripe.org>"
 
-# Install ffmpeg
-RUN apk add --no-cache ffmpeg python3 && ln -sf python3 /usr/bin/python
+# Install ffmpeg and dependencies
+RUN apk add --no-cache ffmpeg python3 curl && ln -sf python3 /usr/bin/python
+
+# Download yt-dlp
+RUN mkdir -p /app/scripts && \
+    curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /app/scripts/yt-dlp && \
+    chmod +x /app/scripts/yt-dlp
 
 # Copy needed files
 COPY --from=build-stage /tmp/build/package.json .
@@ -40,9 +45,6 @@ COPY --from=build-stage /tmp/build/index.js ./index.js
 
 # Additional Environment Variables
 ENV NODE_ENV production
-
-# Add scripts volumes
-VOLUME /app/scripts
 
 # Start the app with node
 CMD ["node", "--es-module-specifier-resolution=node", "index.js"]
