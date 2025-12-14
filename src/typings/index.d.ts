@@ -26,7 +26,7 @@ import { type SQLiteDataManager } from "../utils/structures/SQLiteDataManager.js
 export type MessageInteractionAction = "editReply" | "followUp" | "reply";
 
 export type QueryData = {
-    sourceType?: "query" | "soundcloud" | "spotify" | "unknown" | "youtube" | "bilibili";
+    sourceType?: "bilibili" | "query" | "soundcloud" | "spotify" | "unknown" | "youtube";
     type?: "artist" | "playlist" | "track" | "unknown";
     isURL: boolean;
 };
