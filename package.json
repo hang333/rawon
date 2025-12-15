@@ -15,7 +15,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "build": "pnpm run lint && pnpm run compile",
+        "build": "bun run lint && bun run compile",
         "compile": "npx swc src -d dist --strip-leading-paths",
         "tscompile": "tsc --build tsconfig.json",
         "lint": "eslint . --cache --cache-file .eslintcache",
@@ -23,7 +23,7 @@
         "pretty": "prettier --check src/**/*.ts",
         "pretty:write": "prettier --write src/**/*.ts",
         "start": "node --es-module-specifier-resolution=node -r dotenv/config .",
-        "start:dev": "rimraf ./dist && pnpm run compile && pnpm start"
+        "start:dev": "rimraf ./dist && bun run compile && bun run start"
     },
     "engines": {
         "node": ">=16.6.0",
@@ -40,6 +40,11 @@
         "@swc/cli": "0.7.9",
         "@swc/core": "1.15.4",
         "date-fns": "4.1.0",
+        "discord.js": "14.15.3",
+        "dotenv": "17.0.0",
+        "ffmpeg-static": "^5.3.0",
+        "got": "14.4.2",
+        "i18n": "0.15.1",
         "discord.js": "14.25.1",
         "dotenv": "17.2.3",
         "ffmpeg-static": "^5.3.0",
