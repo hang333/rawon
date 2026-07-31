@@ -10,10 +10,10 @@ import {
 } from "../../../typings/index.js";
 import { chunk } from "../../functions/chunk.js";
 import {
-    getMaxResThumbnail,
     getSoundCloudThumbnail,
     getYouTubeThumbnail,
-} from "../../functions/getMaxResThumbnail.js";
+    pickBestThumbnail,
+} from "../../functions/thumbnails.js";
 import { youtube, youtubeMusic } from "../YouTubeUtil.js";
 import { getInfo } from "../YTDLUtil.js";
 import { checkQuery } from "./checkQuery.js";
@@ -399,11 +399,7 @@ export async function searchTrack(
                     {
                         duration: info?.is_live ? 0 : (info?.duration ?? 0),
                         id: info?.id ?? "",
-                        thumbnail: getMaxResThumbnail(
-                            info?.thumbnails?.sort(
-                                (a, b) => b.height * b.width - a.height * a.width,
-                            )[0].url ?? "",
-                        ),
+                        thumbnail: pickBestThumbnail(info?.thumbnails),
                         title: info?.title ?? "Unknown Song",
                         url: info?.url ?? url.toString(),
                         isLive: info?.is_live,
