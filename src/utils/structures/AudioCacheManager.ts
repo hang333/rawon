@@ -16,6 +16,7 @@ import { PassThrough, type Readable } from "node:stream";
 import { clearInterval, setInterval, setTimeout } from "node:timers";
 import got from "got";
 import { type Rawon } from "../../structures/Rawon.js";
+import { checkQuery } from "../handlers/general/checkQuery.js";
 
 const PRE_CACHE_AHEAD_COUNT = 5;
 const MAX_CACHE_SIZE_MB = 500;
@@ -229,6 +230,16 @@ export class AudioCacheManager {
     }
 
     public async preCacheUrl(url: string, priority = false): Promise<boolean> {
+        // getStream serves SoundCloud through the SoundCloud client and never looks at
+        // the cache for it, so downloading one here spends bandwidth and disk on a file
+        // that can never be read back.
+        if (checkQuery(url).sourceType === "soundcloud") {
+            this.client.logger.debug(
+                `[AudioCacheManager] Skipping pre-cache for SoundCloud URL: ${url.slice(0, 50)}...`,
+            );
+            return false;
+        }
+
         if (this.isCached(url)) {
             return true;
         }
@@ -475,59 +486,85 @@ export class AudioCacheManager {
                     });
                 }
 
+                // yt-dlp exiting non-zero means the download was cut short, but its
+                // stdout still closes cleanly and the partial file is usually well over
+                // the size floor below. Without the exit code, a truncated download is
+                // accepted as a complete track and served from cache until evicted.
+                let exitCode: number | null = null;
+                const processClosed = new Promise<void>((resolveClosed) => {
+                    proc.once("close", (code) => {
+                        exitCode = code;
+                        resolveClosed();
+                    });
+                    // Never let a missing close event wedge the entry in progress.
+                    setTimeout(resolveClosed, 10_000).unref();
+                });
+
                 const writeStream = createWriteStream(cachePath);
                 proc.stdout.pipe(writeStream);
 
                 await new Promise<void>((resolve) => {
                     writeStream.on("finish", () => {
-                        this.inProgressFiles.delete(key);
-                        this.inProgressProcs.delete(key);
+                        void (async () => {
+                            await processClosed;
 
-                        if (this.canceledCacheKeys.has(key)) {
-                            this.canceledCacheKeys.delete(key);
-                            try {
-                                rmSync(cachePath, { force: true });
-                            } catch {}
-                            resolve();
-                            return;
-                        }
+                            this.inProgressFiles.delete(key);
+                            this.inProgressProcs.delete(key);
 
-                        if (hasBotDetectionError) {
-                            try {
-                                rmSync(cachePath, { force: true });
-                            } catch {}
-
-                            if (retryCount < MAX_PRE_CACHE_RETRIES && !hasBotDetectionError) {
-                                setTimeout(
-                                    () => {
-                                        void this.doPreCache(url, retryCount + 1);
-                                    },
-                                    1000 * (retryCount + 1),
-                                );
-                            } else {
-                                this.markFailed(key);
+                            if (this.canceledCacheKeys.has(key)) {
+                                this.canceledCacheKeys.delete(key);
+                                try {
+                                    rmSync(cachePath, { force: true });
+                                } catch {}
+                                resolve();
+                                return;
                             }
-                        } else {
-                            try {
-                                const stats = statSync(cachePath);
-                                if (stats.size >= 1024) {
-                                    this.cachedFiles.set(key, {
-                                        path: cachePath,
-                                        lastAccess: Date.now(),
-                                    });
-                                    this.failedUrls.delete(key);
-                                    this.client.logger.info(
-                                        `[AudioCacheManager] Pre-cached audio for: ${url.slice(0, 50)}...`,
+
+                            if (hasBotDetectionError) {
+                                try {
+                                    rmSync(cachePath, { force: true });
+                                } catch {}
+
+                                if (retryCount < MAX_PRE_CACHE_RETRIES && !hasBotDetectionError) {
+                                    setTimeout(
+                                        () => {
+                                            void this.doPreCache(url, retryCount + 1);
+                                        },
+                                        1000 * (retryCount + 1),
                                     );
                                 } else {
-                                    rmSync(cachePath, { force: true });
                                     this.markFailed(key);
                                 }
-                            } catch {
+                            } else if (exitCode === 0) {
+                                try {
+                                    const stats = statSync(cachePath);
+                                    if (stats.size >= 1024) {
+                                        this.cachedFiles.set(key, {
+                                            path: cachePath,
+                                            lastAccess: Date.now(),
+                                        });
+                                        this.failedUrls.delete(key);
+                                        this.client.logger.info(
+                                            `[AudioCacheManager] Pre-cached audio for: ${url.slice(0, 50)}...`,
+                                        );
+                                    } else {
+                                        rmSync(cachePath, { force: true });
+                                        this.markFailed(key);
+                                    }
+                                } catch {
+                                    this.markFailed(key);
+                                }
+                            } else {
+                                this.client.logger.debug(
+                                    `[AudioCacheManager] Discarding partial pre-cache for ${url.slice(0, 50)}...: yt-dlp exited with ${exitCode ?? "no code"}`,
+                                );
+                                try {
+                                    rmSync(cachePath, { force: true });
+                                } catch {}
                                 this.markFailed(key);
                             }
-                        }
-                        resolve();
+                            resolve();
+                        })();
                     });
 
                     writeStream.on("error", () => {
