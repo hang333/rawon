@@ -14,6 +14,7 @@ import { type CommandContext as LocalCommandContext } from "../../structures/Com
 import { type Rawon } from "../../structures/Rawon.js";
 import { inVC, sameVC, useRequestChannel, validVC } from "../../utils/decorators/MusicUtil.js";
 import { createEmbed } from "../../utils/functions/createEmbed.js";
+import { createResolveNotice } from "../../utils/functions/createResolveNotice.js";
 import { formatBoldPrefixedCommand } from "../../utils/functions/formatCodeSpan.js";
 import { getEffectivePrefix } from "../../utils/functions/getEffectivePrefix.js";
 import { i18n__, i18n__mf } from "../../utils/functions/i18n.js";
@@ -123,18 +124,24 @@ export class PlayCommand extends ContextCommand {
         }
 
         const queryCheck = checkQuery(query ?? "");
-        const songs = await searchTrack(client, query ?? "").catch((error: unknown) => {
-            client.logger.error("[PlayCommand] searchTrack failed:", error);
-            return undefined;
-        });
+        const isCollectionQuery = queryCheck.type === "playlist" || queryCheck.type === "artist";
+
+        const notice = await createResolveNotice(client, localCtx, isCollectionQuery);
+        const songs = await searchTrack(client, query ?? "", undefined, notice.report).catch(
+            (error: unknown) => {
+                client.logger.error("[PlayCommand] searchTrack failed:", error);
+                return undefined;
+            },
+        );
+        await notice.dismiss();
 
         if (!songs || songs.items.length <= 0) {
+            // The notice already used this interaction's reply; CommandContext#send
+            // turns a subsequent one into an editReply, which overwrites the notice.
             return ctx.reply({
                 embeds: [createEmbed("error", __("commands.music.play.noSongData"), true)],
             });
         }
-
-        const isCollectionQuery = queryCheck.type === "playlist" || queryCheck.type === "artist";
 
         return handleVideos(
             client,

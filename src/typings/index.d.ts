@@ -53,6 +53,20 @@ export type SearchTrackResult = {
     playlist?: PlaylistMetadata;
 };
 
+/**
+ * Progress of a collection that takes long enough to be worth reporting:
+ * "loading" while a playlist is paged in, "matching" while its tracks are
+ * resolved one by one. `total` is absent when the source has not said how
+ * many entries to expect.
+ */
+export type SearchProgress = {
+    phase: "loading" | "matching";
+    loaded: number;
+    total?: number;
+};
+
+export type SearchProgressReporter = (progress: SearchProgress) => void;
+
 export type PaginationPayload = {
     edit(index: number, embed: EmbedBuilder, page: string): unknown;
     embed: EmbedBuilder;

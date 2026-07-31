@@ -441,7 +441,12 @@
             "stopPlaying": "停止播放{song}",
             "songRequeued": "播放{song}時遇到問題，已重新添加到隊列中等待重試。",
             "allCookiesFailed": "由於機器人偵測，所有cookie都已失敗！使用 {logoutCmd} 然後 {startCmd} 重新登入。",
-            "ageRestricted": "無法播放 {song}，因為它受到年齡限制並需要登入。"
+            "ageRestricted": "無法播放 {song}，因為它受到年齡限制並需要登入。",
+            "resolving": "正在解析你的請求……",
+            "resolvingCollection": "正在解析播放清單……",
+            "resolvingLoading": "正在載入播放清單……已找到 {loaded} 首。",
+            "resolvingLoadingTotal": "正在載入播放清單…… {loaded}/{total} 首。",
+            "resolvingMatching": "正在比對曲目…… {loaded}/{total}。"
         },
         "musicDecorator": {
             "noInVC": "抱歉，您需要在語音頻道中才能執行此操作。",

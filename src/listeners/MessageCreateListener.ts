@@ -14,11 +14,12 @@ import {
 import { type Rawon } from "../structures/Rawon.js";
 import { ServerQueue } from "../structures/ServerQueue.js";
 import { createEmbed } from "../utils/functions/createEmbed.js";
+import { createResolveNotice } from "../utils/functions/createResolveNotice.js";
 import { createVoiceAdapter } from "../utils/functions/createVoiceAdapter.js";
 import { formatBoldCodeSpan } from "../utils/functions/formatCodeSpan.js";
 import { formatMarkdownLink } from "../utils/functions/formatMarkdownLink.js";
 import { i18n__, i18n__mf } from "../utils/functions/i18n.js";
-import { searchTrack } from "../utils/handlers/GeneralUtil.js";
+import { checkQuery, searchTrack } from "../utils/handlers/GeneralUtil.js";
 import { play } from "../utils/handlers/general/play.js";
 
 const MUSIC_COMMANDS = [
@@ -532,10 +533,19 @@ export class MessageCreateListener extends Listener<typeof Events.MessageCreate>
             `[MultiBot] ${client.user?.tag} PROCESSING voice channel ${voiceChannel.id} (${voiceChannel.name}) for request from ${message.author.tag}`,
         );
 
-        const songs = await searchTrack(client, query).catch((error: unknown) => {
-            client.logger.error("[RequestChannel] searchTrack failed:", error);
-            return null;
-        });
+        const queryData = checkQuery(query);
+        const notice = await createResolveNotice(
+            client,
+            message,
+            queryData.type === "playlist" || queryData.type === "artist",
+        );
+        const songs = await searchTrack(client, query, undefined, notice.report).catch(
+            (error: unknown) => {
+                client.logger.error("[RequestChannel] searchTrack failed:", error);
+                return null;
+            },
+        );
+        await notice.dismiss();
         if (!songs || songs.items.length === 0) {
             this.sendTemporaryReply(
                 message,

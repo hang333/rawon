@@ -3,6 +3,7 @@ import { Playlist, type SearchResult, type Video, type VideoCompact } from "yout
 import { type Rawon } from "../../../structures/Rawon.js";
 import {
     type PlaylistMetadata,
+    type SearchProgressReporter,
     type SearchTrackResult,
     type Song,
     type SpotifyResolveResult,
@@ -31,7 +32,11 @@ function extractVideoId(url: URL): string | null {
     return url.searchParams.get("v");
 }
 
-async function loadAllPlaylistVideos(client: Rawon, playlist: Playlist): Promise<void> {
+async function loadAllPlaylistVideos(
+    client: Rawon,
+    playlist: Playlist,
+    onProgress?: SearchProgressReporter,
+): Promise<void> {
     const maxIterations = 50;
     const maxStagnant = 3;
     let iterations = 0;
@@ -56,6 +61,12 @@ async function loadAllPlaylistVideos(client: Rawon, playlist: Playlist): Promise
             stagnant += 1;
         }
         iterations += 1;
+
+        onProgress?.({
+            phase: "loading",
+            loaded: currentCount,
+            total: playlist.videoCount > 0 ? playlist.videoCount : undefined,
+        });
     }
 }
 
@@ -63,6 +74,7 @@ export async function searchTrack(
     client: Rawon,
     query: string,
     source: "soundcloud" | "youtube" | undefined = "youtube",
+    onProgress?: SearchProgressReporter,
 ): Promise<SearchTrackResult> {
     const result: SearchTrackResult = {
         items: [],
@@ -198,7 +210,7 @@ export async function searchTrack(
                                     `[searchTrack] Loading all videos from YouTube playlist "${playlist.title}" (${playlist.videoCount} videos)...`,
                                 );
                                 try {
-                                    await loadAllPlaylistVideos(client, playlist);
+                                    await loadAllPlaylistVideos(client, playlist, onProgress);
                                     client.logger.info(
                                         `[searchTrack] Loaded ${playlist.videos.items.length} videos from playlist "${playlist.title}"`,
                                     );
@@ -377,6 +389,12 @@ export async function searchTrack(
                                 }),
                             );
                             trackResults.push(...batchResults.filter((x): x is Song => x !== null));
+
+                            onProgress?.({
+                                phase: "matching",
+                                loaded: trackResults.length,
+                                total: songs.length,
+                            });
                         }
                         result.items = trackResults;
                         if (spotifyResult.metadata) {

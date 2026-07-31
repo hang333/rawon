@@ -441,7 +441,12 @@
             "stopPlaying": "Stopped playing {song}",
             "songRequeued": "Had trouble playing {song}; re-queued for another attempt.",
             "allCookiesFailed": "All cookies have failed due to bot detection! Use {logoutCmd} then {startCmd} to re-login.",
-            "ageRestricted": "Cannot play {song} because it is age-restricted and requires sign-in."
+            "ageRestricted": "Cannot play {song} because it is age-restricted and requires sign-in.",
+            "resolving": "Resolving your request…",
+            "resolvingCollection": "Resolving the playlist…",
+            "resolvingLoading": "Loading the playlist… {loaded} tracks so far.",
+            "resolvingLoadingTotal": "Loading the playlist… {loaded} of {total} tracks.",
+            "resolvingMatching": "Matching tracks… {loaded} of {total}."
         },
         "musicDecorator": {
             "noInVC": "Sorry, but you need to be in a voice channel to do that.",
