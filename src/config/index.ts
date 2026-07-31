@@ -88,6 +88,10 @@ i18n.configure({
     objectNotation: true,
     updateFiles: false,
     syncFiles: false,
+    // Without this, a phrase missing from a locale renders as its raw dotted key.
+    // Fall back to English instead, so a translation landing late is merely
+    // untranslated rather than broken.
+    retryInDefaultLocale: true,
 });
 
 i18n.setLocale(lang);
