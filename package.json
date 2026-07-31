@@ -4,9 +4,7 @@
     "description": "A simple powerful Discord music (multi-)bot built to fulfill your production desires. Easy to use, with no coding required. The AGPL-3.0 community continuation of Rawon.",
     "license": "AGPL-3.0",
     "author": "Stegripe Development <support@stegripe.org>",
-    "contributors": [
-        "hang333 <jonathan.goh333@gmail.com> (https://github.com/hang333)"
-    ],
+    "contributors": ["hang333 <jonathan.goh333@gmail.com> (https://github.com/hang333)"],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/hang333/rawon-libre.git"

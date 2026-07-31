@@ -55,7 +55,10 @@ export function checkQuery(string: string): QueryData {
     } else if (/bilibili\.com|b23\.tv/gu.test(url.hostname)) {
         result.sourceType = "bilibili";
 
-        result.type = url.pathname.includes("/video/") || /b23\.tv/gu.test(url.hostname) ? "track" : "unknown";
+        result.type =
+            url.pathname.includes("/video/") || /b23\.tv/gu.test(url.hostname)
+                ? "track"
+                : "unknown";
     } else {
         result.sourceType = "unknown";
         result.type = "unknown";
