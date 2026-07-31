@@ -1,17 +1,20 @@
 {
-    "name": "rawon",
+    "name": "rawon-libre",
     "version": "4.6.2",
-    "description": "A simple powerful Discord music (multi-)bot built to fulfill your production desires. Easy to use, with no coding required.",
+    "description": "A simple powerful Discord music (multi-)bot built to fulfill your production desires. Easy to use, with no coding required. The AGPL-3.0 community continuation of Rawon.",
     "license": "AGPL-3.0",
     "author": "Stegripe Development <support@stegripe.org>",
+    "contributors": [
+        "hang333 <jonathan.goh333@gmail.com> (https://github.com/hang333)"
+    ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/stegripe/rawon.git"
+        "url": "git+https://github.com/hang333/rawon-libre.git"
     },
     "bugs": {
-        "url": "https://github.com/stegripe/rawon/issues"
+        "url": "https://github.com/hang333/rawon-libre/issues"
     },
-    "homepage": "https://github.com/stegripe/rawon#readme",
+    "homepage": "https://github.com/hang333/rawon-libre#readme",
     "main": "index.js",
     "type": "module",
     "scripts": {

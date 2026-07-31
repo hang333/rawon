@@ -6,20 +6,20 @@ x-common-general: &common-general
         memory: 512M
 
 services:
-  rawon:
+  rawon-libre:
     <<: *common-general
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    image: ghcr.io/stegripe/rawon:latest
-    container_name: rawon-bot
+    image: ghcr.io/hang333/rawon-libre:latest
+    container_name: rawon-libre-bot
     env_file:
       - .env
       - dev.env
     ports:
       - "${DEVTOOLS_PORT:-3000}:${DEVTOOLS_PORT:-3000}"
     volumes:
-      - rawon:/app/cache
+      - rawon-libre:/app/cache
 
 volumes:
-  rawon:
+  rawon-libre:

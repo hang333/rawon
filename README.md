@@ -1,19 +1,45 @@
 <div align="center">
-<img src="https://cdn.stegripe.org/images/rawon_splash.png" width="512">
-<br>
-<a href="https://discord.com/oauth2/authorize?client_id=999162626036740138&permissions=4855722558221376&scope=bot%20applications.commands"><img src="https://img.shields.io/static/v1?label=Invite%20Me&message=Rawon%232575&plastic&color=5865F2&logo=discord"></a>
-<img src="https://badgen.net/badge/icon/typescript?icon=typescript&label">
-<a href="https://github.com/stegripe/rawon/actions?query=workflow%3A%22Lint+code+and+compile+setup+script%22"><img src="https://github.com/stegripe/rawon/workflows/Lint%20code%20and%20compile%20setup%20script/badge.svg" alt="CI Status" /></a>
+
+# Rawon Libre
+
+**The AGPL-3.0 community continuation of [Rawon](https://github.com/stegripe/rawon).**
+
+<a href="https://github.com/hang333/rawon-libre/actions?query=workflow%3A%22Lint+code+and+compile+setup+script%22"><img src="https://github.com/hang333/rawon-libre/workflows/Lint%20code%20and%20compile%20setup%20script/badge.svg" alt="CI Status" /></a>
+<img src="https://badgen.net/badge/icon/typescript?icon=typescript&label" alt="TypeScript">
+<img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="License: AGPL-3.0">
+
 </div>
 
-# Rawon
-
 > A simple powerful Discord music (multi-)bot built to fulfill your production desires. Easy to use, with no coding required.
+
+## About this fork
+
+**Rawon Libre is the AGPL-3.0 open source continuation of [Rawon](https://github.com/stegripe/rawon).**
+
+On 2026-05-04 the upstream project relicensed from **AGPL-3.0** to **CC-BY-NC-ND-4.0** — a licence
+that is not open source, forbids commercial use, and forbids derivative works. This fork continues
+the project from [`a1b0ef7`][fork-point], the last commit ever published under AGPL-3.0, and will
+stay AGPL-3.0.
+
+### What that means in practice
+
+- Everything up to and including [`a1b0ef7`][fork-point] is upstream work released under AGPL-3.0.
+  Copyright remains with Stegripe Development and the original contributors — that licence grant is
+  irrevocable, which is precisely why this fork is possible.
+- **No code from upstream commits after [`a1b0ef7`][fork-point] is included here, and none will be
+  merged.** Those commits are CC-BY-NC-ND-4.0 and are incompatible with this project.
+- Where upstream has since fixed a bug or added a feature, it is reimplemented independently from a
+  description of the behaviour. Upstream's implementation is not copied, adapted, or consulted
+  line-by-line.
+- Contributions are welcome and are accepted under AGPL-3.0. Please do not submit patches derived
+  from post-relicence upstream code.
+
+[fork-point]: https://github.com/stegripe/rawon/commit/a1b0ef7e66e6dced13608ad9fc13cfa953441c55
 
 ## Features
 - Production-ready, no coding required
 - Request channel feature for seamless music experience
-- Support for YouTube, Spotify, SoundCloud, and direct files
+- Support for YouTube, Spotify, SoundCloud, Bilibili, and direct files
 - Run multiple bot instances for different voice channels
 - Smart audio pre-caching for smoother playback
 - Built-in Google login via Puppeteer for cookie management
@@ -56,9 +82,9 @@ Example: `!requestchannel #music-requests`
 3. Create a `docker-compose.yaml` file:
 ```yaml
 services:
-  rawon:
-    image: ghcr.io/stegripe/rawon:latest
-    container_name: rawon-bot
+  rawon-libre:
+    image: ghcr.io/hang333/rawon-libre:latest
+    container_name: rawon-libre-bot
     restart: unless-stopped
     env_file:
       - .env
@@ -66,10 +92,10 @@ services:
     ports:
       - "${DEVTOOLS_PORT:-3000}:${DEVTOOLS_PORT:-3000}"
     volumes:
-      - rawon:/app/cache
+      - rawon-libre:/app/cache
 
 volumes:
-  rawon:
+  rawon-libre:
 ```
 4. Start the bot:
 ```sh
@@ -77,18 +103,18 @@ docker compose up -d
 ```
 5. View logs:
 ```sh
-docker logs -f rawon-bot
+docker logs -f rawon-libre-bot
 ```
 
 #### Using Docker Run
 ```sh
 docker run -d \
-  --name rawon-bot \
+  --name rawon-libre-bot \
   --env-file .env \
   -p "${DEVTOOLS_PORT:-3000}:${DEVTOOLS_PORT:-3000}" \
-  -v rawon:/app/cache \
+  -v rawon-libre:/app/cache \
   --restart unless-stopped \
-  ghcr.io/stegripe/rawon:latest
+  ghcr.io/hang333/rawon-libre:latest
 ```
 
 #### Volume Information
@@ -144,14 +170,18 @@ If you're hosting on cloud providers (AWS, GCP, Azure, Railway, etc.), you may e
 ```
 
 ## Support & Questions
-For help and questions, join our official [Discord Server](https://stegripe.org/discord).
+Please use [GitHub Issues](https://github.com/hang333/rawon-libre/issues) for bugs and questions
+about this fork. Do not direct questions about Rawon Libre to the upstream project — it is a
+separate, independently maintained codebase.
 
 ## Contributors
 
-### Developers
+Rawon Libre stands on the work of everyone who built Rawon under AGPL-3.0.
+
+### Upstream developers
 - [Stegripe Developers](https://github.com/orgs/stegripe/teams/developer)
 
-### Translators
+### Upstream translators
 - [Stegripe Developers](https://github.com/orgs/stegripe/teams/developer) (en-US, id-ID, ko-KR, ms-MY)
 - [@21Z](https://github.com/21Z) (en-US)
 - [@lxndr-rl](https://github.com/lxndr-rl) (es-ES)
@@ -164,4 +194,18 @@ For help and questions, join our official [Discord Server](https://stegripe.org/
 - [@Fyphen1223](https://github.com/Fyphen1223) (ja-JP)
 - [@OsmanTunahan](https://github.com/OsmanTunahan) (tr-TR)
 
-> © 2026 Stegripe Development
+### Fork maintainer
+- [@hang333](https://github.com/hang333)
+
+## Licence
+
+Rawon Libre is licensed under the **GNU Affero General Public License v3.0**. See [LICENSE](./LICENSE).
+
+- Rawon, up to and including commit [`a1b0ef7`][fork-point] — © Stegripe Development and
+  contributors, licensed under AGPL-3.0.
+- Rawon Libre, changes after the fork point — © the Rawon Libre contributors, licensed under
+  AGPL-3.0.
+
+Because this bot interacts with users over a network, AGPL-3.0 §13 applies: if you run a modified
+version, you must offer its source to your users. The `about` command links to this repository —
+point it at your own fork if you deploy modified code.

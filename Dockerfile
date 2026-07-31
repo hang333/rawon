@@ -18,8 +18,11 @@ RUN pnpm prune --production
 
 FROM node:24-alpine
 
-LABEL name="rawon"
-LABEL maintainer="Stegripe Development <support@stegripe.org>"
+LABEL name="rawon-libre"
+LABEL maintainer="hang333 <jonathan.goh333@gmail.com>"
+LABEL org.opencontainers.image.source="https://github.com/hang333/rawon-libre"
+LABEL org.opencontainers.image.licenses="AGPL-3.0"
+LABEL org.opencontainers.image.description="The AGPL-3.0 community continuation of Rawon."
 
 WORKDIR /app
 

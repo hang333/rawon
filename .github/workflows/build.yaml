@@ -11,4 +11,32 @@ on:
 
 jobs:
   build:
-    uses: stegripe/workflows/.github/workflows/pnpm-lint-and-compile.yaml@main # main
+    name: Lint and compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          # Chromium comes from the runtime image, not from the puppeteer package.
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Compile
+        run: pnpm tscompile
