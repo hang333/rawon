@@ -390,7 +390,8 @@
             "resumeQueue": "Someone has joined the voice channel.\nResuming {song}",
             "resumeQueueFooter": "Queue Resumed",
             "unableJoinStageMessage": "Unable to join as Speaker, the queue has been deleted.",
-            "unableReconfigureConnection": "Unable to re-configure connection, the queue has been deleted."
+            "unableReconfigureConnection": "Unable to re-configure connection, the queue has been deleted.",
+            "requesterLeft": "{user} left the voice channel, but their track {song} is still playing."
         }
     },
     "requestChannel": {

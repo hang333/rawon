@@ -1,5 +1,10 @@
 import { clearTimeout, setTimeout } from "node:timers";
-import { type AudioPlayerPausedState, entersState, VoiceConnectionStatus } from "@discordjs/voice";
+import {
+    type AudioPlayerPausedState,
+    type AudioPlayerPlayingState,
+    entersState,
+    VoiceConnectionStatus,
+} from "@discordjs/voice";
 import { ApplyOptions } from "@sapphire/decorators";
 import { Events, Listener, type ListenerOptions } from "@sapphire/framework";
 import {
@@ -312,6 +317,7 @@ export class VoiceStateUpdateListener extends Listener<typeof Events.VoiceStateU
         ) {
             queue.skipVoters = queue.skipVoters.filter((x) => x !== member?.id);
             this.timeout(queueVcMembers, queue, newState, thisBotGuild);
+            this.announceRequesterLeft(queueVcMembers, queue, newState, thisBotGuild);
         }
 
         if (newId === queueVc.id && member?.user.bot !== true && queue.timeout) {
@@ -386,6 +392,58 @@ export class VoiceStateUpdateListener extends Listener<typeof Events.VoiceStateU
                 }, 60_000);
             }
         })();
+    }
+
+    /**
+     * Point out that the person who queued the current track has walked away, so
+     * the people still listening know they can skip it without waiting them out.
+     * An empty channel is timeout()'s business and there would be nobody to tell.
+     */
+    private announceRequesterLeft(
+        vcMembers: VoiceChannel["members"],
+        queue: ServerQueue,
+        _state: VoiceState,
+        guild: typeof _state.guild,
+    ): void {
+        const member = _state.member;
+        if (vcMembers.size === 0 || !member) {
+            return;
+        }
+
+        const playerState = queue.player.state as AudioPlayerPlayingState | undefined;
+        const current = playerState?.resource?.metadata as QueueSong | undefined;
+        if (!current || current.requester.id !== member.id) {
+            return;
+        }
+
+        const client = _state.client as Rawon;
+        const __mf = i18n__mf(client, guild);
+        const { song } = current;
+        const isRequestChannel = queue.client.requestChannelManager.isRequestChannel(
+            guild,
+            queue.textChannel.id,
+        );
+
+        void (async () => {
+            const msg = await queue.textChannel.send({
+                flags: MessageFlags.SuppressNotifications,
+                embeds: [
+                    createEmbed(
+                        "warn",
+                        `👋 **|** ${__mf("events.voiceStateUpdate.requesterLeft", {
+                            user: member.toString(),
+                            song: `**${formatMarkdownLink(song.title, song.url)}**`,
+                        })}`,
+                    ),
+                ],
+            });
+
+            if (isRequestChannel) {
+                setTimeout(() => {
+                    void msg.delete().catch(() => null);
+                }, 10_000);
+            }
+        })().catch(() => null);
     }
 
     private resume(

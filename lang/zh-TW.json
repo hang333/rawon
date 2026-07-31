@@ -390,7 +390,8 @@
             "resumeQueue": "有人加入了語音頻道。\n恢復中 {song}",
             "resumeQueueFooter": "隊列已恢復",
             "unableJoinStageMessage": "無法以演講者身份加入，隊列已被刪除。",
-            "unableReconfigureConnection": "無法重新配置連接，隊列已被刪除。"
+            "unableReconfigureConnection": "無法重新配置連接，隊列已被刪除。",
+            "requesterLeft": "{user} 已離開語音頻道，但點播的 {song} 仍在播放。"
         }
     },
     "requestChannel": {

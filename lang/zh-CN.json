@@ -390,7 +390,8 @@
             "resumeQueue": "有人加入了语音频道。\n恢复中 {song}",
             "resumeQueueFooter": "队列已恢复",
             "unableJoinStageMessage": "无法以演讲者身份加入，队列已被删除。",
-            "unableReconfigureConnection": "无法重新配置连接，队列已被删除。"
+            "unableReconfigureConnection": "无法重新配置连接，队列已被删除。",
+            "requesterLeft": "{user} 已离开语音频道，但点播的 {song} 仍在播放。"
         }
     },
     "requestChannel": {
