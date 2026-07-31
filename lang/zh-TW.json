@@ -359,6 +359,13 @@
                 "slashStatusDescription": "顯示目前點播頻道",
                 "slashChannelDescription": "要設定為點播頻道的頻道",
                 "usage": "{prefix}requestchannel <set | remove | status> [channel]"
+            },
+            "alwaysOn": {
+                "description": "所有人離開後仍讓機器人留在語音頻道",
+                "usage": "{prefix}alwayson",
+                "noPermission": "你需要「管理伺服器」權限才能修改常駐模式。",
+                "enabledText": "常駐模式已**開啟**。頻道空了仍會暫停播放，但會保留佇列，有人回來時繼續播放。",
+                "disabledText": "常駐模式已**關閉**。頻道閒置一段時間後，機器人將離開並清空佇列。"
             }
         }
     },

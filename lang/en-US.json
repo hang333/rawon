@@ -359,6 +359,13 @@
                 "slashStatusDescription": "Show the current request channel",
                 "slashChannelDescription": "The channel to set as request channel",
                 "usage": "{prefix}requestchannel <set | remove | status> [channel]"
+            },
+            "alwaysOn": {
+                "description": "Keep the bot in the voice channel when everyone leaves",
+                "usage": "{prefix}alwayson",
+                "noPermission": "You need the Manage Server permission to change always-on mode.",
+                "enabledText": "Always-on is now **on**. Playback still pauses when the channel empties, but the queue is kept and resumes when someone returns.",
+                "disabledText": "Always-on is now **off**. The bot will leave and clear the queue after the channel has been empty for a while."
             }
         }
     },

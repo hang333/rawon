@@ -301,6 +301,8 @@ export type GuildData = {
     };
     locale?: string;
     prefix?: string;
+    /** Stay connected when the voice channel empties, instead of timing out. */
+    alwaysOn?: boolean;
 };
 
 export type NonAbstractConstructor<Result = unknown> = new (...args: any[]) => Result;

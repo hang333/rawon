@@ -344,6 +344,16 @@ export class VoiceStateUpdateListener extends Listener<typeof Events.VoiceStateU
         (guild.queue as ServerQueue).timeout = null;
         queue.player.pause();
 
+        // Always-on still pauses for an empty channel — there is nobody to play to —
+        // but keeps the connection and the queue, so playback resumes the moment
+        // somebody comes back instead of being rebuilt from scratch.
+        if (client.data.data?.[guild.id]?.alwaysOn === true) {
+            client.logger.debug(
+                `[VoiceStateUpdate] Always-on is set for ${guild.id}; paused without arming the disconnect timeout.`,
+            );
+            return;
+        }
+
         const timeout = 60_000;
         const duration = formatMS(timeout);
         const isRequestChannel = queue.client.requestChannelManager.isRequestChannel(

@@ -359,6 +359,13 @@
                 "slashStatusDescription": "显示当前点播频道",
                 "slashChannelDescription": "要设置为点播频道的频道",
                 "usage": "{prefix}requestchannel <set | remove | status> [channel]"
+            },
+            "alwaysOn": {
+                "description": "所有人离开后仍让机器人留在语音频道",
+                "usage": "{prefix}alwayson",
+                "noPermission": "你需要「管理服务器」权限才能修改常驻模式。",
+                "enabledText": "常驻模式已**开启**。频道空了仍会暂停播放，但会保留队列，有人回来时继续播放。",
+                "disabledText": "常驻模式已**关闭**。频道空置一段时间后，机器人将离开并清空队列。"
             }
         }
     },

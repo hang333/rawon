@@ -47,7 +47,8 @@ export class SQLiteDataManager<T extends Record<string, GuildData> = Record<stri
                 guild_id TEXT PRIMARY KEY,
                 locale TEXT,
                 dj_enable INTEGER DEFAULT 0,
-                dj_role TEXT
+                dj_role TEXT,
+                always_on INTEGER DEFAULT 0
             )
         `);
 
@@ -124,6 +125,13 @@ export class SQLiteDataManager<T extends Record<string, GuildData> = Record<stri
             `);
         }
 
+        const hasAlwaysOnColumn = tableInfo.some((col) => col.name === "always_on");
+        if (!hasAlwaysOnColumn) {
+            this.db.exec(`
+                ALTER TABLE guilds ADD COLUMN always_on INTEGER DEFAULT 0;
+            `);
+        }
+
         const playerStateInfo = this.db.prepare("PRAGMA table_info(player_states)").all() as Array<{
             cid: number;
             name: string;
@@ -172,6 +180,7 @@ export class SQLiteDataManager<T extends Record<string, GuildData> = Record<stri
                     dj_enable: number;
                     dj_role: string | null;
                     prefix: string | null;
+                    always_on: number | null;
                 }>;
 
                 const requestChannels = this.db
@@ -188,6 +197,7 @@ export class SQLiteDataManager<T extends Record<string, GuildData> = Record<stri
                     data[guild.guild_id] = {
                         locale: guild.locale ?? undefined,
                         prefix: guild.prefix ?? undefined,
+                        alwaysOn: guild.always_on === 1,
                         dj:
                             guild.dj_enable !== 0 || guild.dj_role !== null
                                 ? {
@@ -238,13 +248,14 @@ export class SQLiteDataManager<T extends Record<string, GuildData> = Record<stri
             const transaction = this.db.transaction(() => {
                 for (const [guildId, guildData] of Object.entries(dat) as [string, GuildData][]) {
                     const guildStmt = this.db.prepare(`
-                        INSERT INTO guilds (guild_id, locale, dj_enable, dj_role, prefix)
-                        VALUES (?, ?, ?, ?, ?)
+                        INSERT INTO guilds (guild_id, locale, dj_enable, dj_role, prefix, always_on)
+                        VALUES (?, ?, ?, ?, ?, ?)
                         ON CONFLICT(guild_id) DO UPDATE SET
                             locale = excluded.locale,
                             dj_enable = excluded.dj_enable,
                             dj_role = excluded.dj_role,
-                            prefix = excluded.prefix
+                            prefix = excluded.prefix,
+                            always_on = excluded.always_on
                     `);
 
                     guildStmt.run(
@@ -253,6 +264,7 @@ export class SQLiteDataManager<T extends Record<string, GuildData> = Record<stri
                         guildData.dj?.enable ? 1 : 0,
                         guildData.dj?.role ?? null,
                         guildData.prefix ?? null,
+                        guildData.alwaysOn === true ? 1 : 0,
                     );
                 }
             });
