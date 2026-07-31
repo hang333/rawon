@@ -5,6 +5,16 @@
         {
             "matchPackageNames": ["opusscript"],
             "allowedVersions": ">0.1"
+        },
+        {
+            "matchPackageNames": ["better-sqlite3"],
+            "allowedVersions": "<13",
+            "description": "13.0.2 segfaults on `new Database()` under Node 22.11; revisit once verified on the Node 24 target."
+        },
+        {
+            "matchPackageNames": ["@types/node"],
+            "allowedVersions": "<25",
+            "description": "Keep the type surface aligned with the Node version in .node-version."
         }
     ]
 }
