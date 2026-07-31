@@ -110,10 +110,10 @@ export class PlayCommand extends ContextCommand {
                             voiceChannel: `**\`${
                                 ctx.guild.channels.cache.get(
                                     (
-                                        ctx.guild.queue.connection?.joinConfig as {
-                                            channelId: string;
-                                        }
-                                    ).channelId,
+                                        ctx.guild.queue.connection?.joinConfig as
+                                            | { channelId: string }
+                                            | undefined
+                                    )?.channelId ?? "",
                                 )?.name ?? "#unknown-channel"
                             }\`**`,
                         }),
