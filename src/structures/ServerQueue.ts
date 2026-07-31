@@ -30,6 +30,13 @@ import { type Rawon } from "./Rawon.js";
 
 const nonEnum = { enumerable: false };
 
+/**
+ * How many recently played tracks auto-play tries not to repeat. A radio mix is
+ * usually a few dozen entries, so this is wide enough to stop the same handful
+ * cycling while still leaving something to choose from.
+ */
+const RECENTLY_PLAYED_LIMIT = 30;
+
 export class ServerQueue {
     public readonly player: AudioPlayer = createAudioPlayer();
     public connection: VoiceConnection | null = null;
@@ -56,6 +63,7 @@ export class ServerQueue {
     private _prefetchedAutoplaySong: { fromSongKey: Snowflake; song: Song } | null = null;
     private _autoplayPrefetchPromise: Promise<void> | null = null;
     private _autoplayPrefetchForKey: Snowflake | null = null;
+    private _recentlyPlayed: string[] = [];
 
     public constructor(public readonly textChannel: TextChannel) {
         Object.defineProperties(this, {
@@ -71,6 +79,7 @@ export class ServerQueue {
             _prefetchedAutoplaySong: nonEnum,
             _autoplayPrefetchPromise: nonEnum,
             _autoplayPrefetchForKey: nonEnum,
+            _recentlyPlayed: nonEnum,
         });
 
         this.songs = new SongManager(this.client, this.textChannel.guild);
@@ -172,6 +181,8 @@ export class ServerQueue {
                             sortedSongs.filter((x) => x.index > song.index).first()?.key ??
                             (this.loopMode === "QUEUE" ? (sortedSongs.first()?.key ?? "") : "");
                     }
+
+                    this.rememberPlayed(song.song);
 
                     const me = this.textChannel.guild.members.me;
                     if (!nextS && this.autoPlay && me) {
@@ -1100,6 +1111,35 @@ export class ServerQueue {
         return nextKey;
     }
 
+    private static songIdentity(song: Song): string {
+        return song.id.length > 0 ? song.id : song.url;
+    }
+
+    /**
+     * Note that a track has just played, so auto-play can steer away from it.
+     * Re-inserting a repeat at the end keeps the window ordered by last heard.
+     */
+    private rememberPlayed(song: Song): void {
+        const identity = ServerQueue.songIdentity(song);
+        if (identity.length === 0) {
+            return;
+        }
+
+        const seenAt = this._recentlyPlayed.indexOf(identity);
+        if (seenAt !== -1) {
+            this._recentlyPlayed.splice(seenAt, 1);
+        }
+
+        this._recentlyPlayed.push(identity);
+        while (this._recentlyPlayed.length > RECENTLY_PLAYED_LIMIT) {
+            this._recentlyPlayed.shift();
+        }
+    }
+
+    private wasRecentlyPlayed(song: Song): boolean {
+        return this._recentlyPlayed.includes(ServerQueue.songIdentity(song));
+    }
+
     private async resolveAutoplaySong(currentSong: QueueSong): Promise<Song | undefined> {
         const queryData = checkQuery(currentSong.song.url);
         const sourceType = queryData.sourceType;
@@ -1122,8 +1162,13 @@ export class ServerQueue {
                     return undefined;
                 }
 
-                const randomIndex = Math.floor(Math.random() * candidates.length);
-                return candidates[randomIndex];
+                // Prefer anything not heard recently, but fall back to the full set
+                // rather than stopping auto-play when a small mix is exhausted.
+                const unheard = candidates.filter((item) => !this.wasRecentlyPlayed(item));
+                const pool = unheard.length > 0 ? unheard : candidates;
+
+                const randomIndex = Math.floor(Math.random() * pool.length);
+                return pool[randomIndex];
             } catch (error) {
                 this.client.logger.debug("[ServerQueue] Auto-play resolve failed", {
                     guild: this.textChannel.guild.id,
