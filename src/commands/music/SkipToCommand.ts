@@ -16,6 +16,7 @@ import { type QueueSong } from "../../typings/index.js";
 import { haveQueue, inVC, sameVC } from "../../utils/decorators/MusicUtil.js";
 import { createEmbed } from "../../utils/functions/createEmbed.js";
 import { formatBoldPrefixedCommand } from "../../utils/functions/formatCodeSpan.js";
+import { formatMarkdownLink } from "../../utils/functions/formatMarkdownLink.js";
 import { getEffectivePrefix } from "../../utils/functions/getEffectivePrefix.js";
 import { i18n__, i18n__mf } from "../../utils/functions/i18n.js";
 import { play } from "../../utils/handlers/GeneralUtil.js";
@@ -219,7 +220,7 @@ export class SkipToCommand extends ContextCommand {
                 createEmbed(
                     "success",
                     `⏭️ **|** ${__mf("commands.music.skipTo.skipMessage", {
-                        song: `**[${song.song.title}](${song.song.url})**`,
+                        song: `**${formatMarkdownLink(song.song.title, song.song.url)}**`,
                     })}`,
                 ).setThumbnail(song.song.thumbnail),
             ],

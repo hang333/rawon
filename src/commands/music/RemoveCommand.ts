@@ -4,7 +4,6 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { type Command } from "@sapphire/framework";
 import { type CommandContext, ContextCommand } from "@stegripe/command-context";
 import {
-    escapeMarkdown,
     type GuildMember,
     PermissionFlagsBits,
     type SlashCommandBuilder,
@@ -17,6 +16,7 @@ import { type QueueSong } from "../../typings/index.js";
 import { haveQueue, inVC, sameVC } from "../../utils/decorators/MusicUtil.js";
 import { chunk } from "../../utils/functions/chunk.js";
 import { createEmbed } from "../../utils/functions/createEmbed.js";
+import { formatMarkdownLink } from "../../utils/functions/formatMarkdownLink.js";
 import { i18n__, i18n__mf } from "../../utils/functions/i18n.js";
 import { parseHTMLElements } from "../../utils/functions/parseHTMLElements.js";
 import { ButtonPagination } from "../../utils/structures/ButtonPagination.js";
@@ -141,7 +141,7 @@ export class RemoveCommand extends ContextCommand {
                 (song, index) =>
                     `${isSkip ? __("commands.music.remove.songSkip") : ""}${
                         ind * 10 + (index + 1)
-                    }.) **[${escapeMarkdown(parseHTMLElements(song.song.title))}](${song.song.url})**`,
+                    }.) **${formatMarkdownLink(parseHTMLElements(song.song.title), song.song.url)}**`,
             );
 
             return texts.join("\n");

@@ -16,6 +16,7 @@ import { ServerQueue } from "../structures/ServerQueue.js";
 import { createEmbed } from "../utils/functions/createEmbed.js";
 import { createVoiceAdapter } from "../utils/functions/createVoiceAdapter.js";
 import { formatBoldCodeSpan } from "../utils/functions/formatCodeSpan.js";
+import { formatMarkdownLink } from "../utils/functions/formatMarkdownLink.js";
 import { i18n__, i18n__mf } from "../utils/functions/i18n.js";
 import { searchTrack } from "../utils/handlers/GeneralUtil.js";
 import { play } from "../utils/handlers/general/play.js";
@@ -626,7 +627,7 @@ export class MessageCreateListener extends Listener<typeof Events.MessageCreate>
             confirmEmbed = createEmbed(
                 "success",
                 `🎶 **|** ${__mf("requestChannel.addedPlaylistToQueue", {
-                    playlist: `**[${playlistTitle}](${playlistUrl})**`,
+                    playlist: `**${formatMarkdownLink(playlistTitle, playlistUrl)}**`,
                     count: `**\`${songs.items.length.toString()}\`**`,
                 })}`,
             );
@@ -642,7 +643,7 @@ export class MessageCreateListener extends Listener<typeof Events.MessageCreate>
             confirmEmbed = createEmbed(
                 "success",
                 `🎶 **|** ${__mf("requestChannel.addedToQueue", {
-                    song: `**[${songTitle}](${songUrl})**`,
+                    song: `**${formatMarkdownLink(songTitle, songUrl)}**`,
                 })}`,
             );
             if (songs.items[0].thumbnail) {

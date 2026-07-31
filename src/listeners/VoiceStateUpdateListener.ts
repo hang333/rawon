@@ -14,6 +14,7 @@ import { type Rawon } from "../structures/Rawon.js";
 import { type ServerQueue } from "../structures/ServerQueue.js";
 import { type QueueSong } from "../typings/index.js";
 import { createEmbed } from "../utils/functions/createEmbed.js";
+import { formatMarkdownLink } from "../utils/functions/formatMarkdownLink.js";
 import { formatMS } from "../utils/functions/formatMS.js";
 import { i18n__, i18n__mf } from "../utils/functions/i18n.js";
 
@@ -419,7 +420,7 @@ export class VoiceStateUpdateListener extends Listener<typeof Events.VoiceStateU
                     createEmbed(
                         "info",
                         `▶️ **|** ${__mf("events.voiceStateUpdate.resumeQueue", {
-                            song: `**[${song.title}](${song.url})**`,
+                            song: `**${formatMarkdownLink(song.title, song.url)}**`,
                         })}`,
                     )
                         .setThumbnail(song.thumbnail)

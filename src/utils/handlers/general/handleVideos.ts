@@ -15,6 +15,7 @@ import { chunk } from "../../functions/chunk.js";
 import { createEmbed } from "../../functions/createEmbed.js";
 import { createVoiceAdapter } from "../../functions/createVoiceAdapter.js";
 import { formatBoldCodeSpan } from "../../functions/formatCodeSpan.js";
+import { formatMarkdownLink } from "../../functions/formatMarkdownLink.js";
 import { i18n__, i18n__mf } from "../../functions/i18n.js";
 import { parseHTMLElements } from "../../functions/parseHTMLElements.js";
 import { ButtonPagination } from "../../structures/ButtonPagination.js";
@@ -59,7 +60,7 @@ export async function handleVideos(
             const confirmEmbed = createEmbed(
                 "success",
                 `🎶 **|** ${__mf("requestChannel.addedToQueue", {
-                    song: `**[${songTitle}](${songUrl})**`,
+                    song: `**${formatMarkdownLink(songTitle, songUrl)}**`,
                 })}`,
             );
             if (song.thumbnail) {
@@ -80,7 +81,7 @@ export async function handleVideos(
             const playlistTitle = escapeMarkdown(parseHTMLElements(playlistMeta.title));
             const playlistText =
                 (playlistMeta.url?.length ?? 0) > 0
-                    ? `**[${playlistTitle}](${playlistMeta.url})**`
+                    ? `**${formatMarkdownLink(playlistTitle, playlistMeta.url)}**`
                     : `**${playlistTitle}**`;
             const confirmEmbed = createEmbed(
                 "success",

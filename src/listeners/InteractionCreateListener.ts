@@ -12,7 +12,6 @@ import {
     ButtonStyle,
     Collection,
     ComponentType,
-    escapeMarkdown,
     GuildMember,
     type Interaction,
     Message,
@@ -28,6 +27,7 @@ import { type ServerQueue } from "../structures/ServerQueue.js";
 import { type LoopMode, type LyricsAPIResult, type QueueSong } from "../typings/index.js";
 import { chunk } from "../utils/functions/chunk.js";
 import { createEmbed } from "../utils/functions/createEmbed.js";
+import { formatMarkdownLink } from "../utils/functions/formatMarkdownLink.js";
 import { i18n__, i18n__mf } from "../utils/functions/i18n.js";
 import { parseHTMLElements } from "../utils/functions/parseHTMLElements.js";
 
@@ -922,7 +922,9 @@ export class InteractionCreateListener extends Listener<typeof Events.Interactio
                 const skipEmbed = createEmbed(
                     "success",
                     `⏭️ **|** ${__mf("commands.music.skip.skipMessage", {
-                        song: skipSong ? `**[${skipSong.song.title}](${skipSong.song.url})**` : "",
+                        song: skipSong
+                            ? `**${formatMarkdownLink(skipSong.song.title, skipSong.song.url)}**`
+                            : "",
                     })}`,
                 ).setThumbnail(skipSong?.song.thumbnail ?? null);
 
@@ -1212,7 +1214,7 @@ export class InteractionCreateListener extends Listener<typeof Events.Interactio
                 queue.player.stop(true);
 
                 const opening = __mf("commands.music.remove.songsRemoved", { removed: 1 });
-                const pageContent = `${__("commands.music.remove.songSkip")}1.) **[${escapeMarkdown(parseHTMLElements(songTitle))}](${songUrl})**`;
+                const pageContent = `${__("commands.music.remove.songSkip")}1.) **${formatMarkdownLink(parseHTMLElements(songTitle), songUrl)}**`;
                 const removeEmbed = createEmbed("info", pageContent)
                     .setAuthor({ name: opening })
                     .setFooter({
@@ -1253,7 +1255,7 @@ export class InteractionCreateListener extends Listener<typeof Events.Interactio
                         const npKey = np.key;
                         const addition = song.key === npKey ? "**" : "";
 
-                        return `${addition}${ind * 10 + (i + 1)} - [${song.song.title}](${song.song.url})${addition}`;
+                        return `${addition}${ind * 10 + (i + 1)} - ${formatMarkdownLink(song.song.title, song.song.url)}${addition}`;
                     });
 
                     return names.join("\n");

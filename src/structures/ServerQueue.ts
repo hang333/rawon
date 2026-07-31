@@ -12,6 +12,7 @@ import { type LoopMode, type QueueSong, type SavedQueueSong, type Song } from ".
 import { createEmbed } from "../utils/functions/createEmbed.js";
 import { type filterArgs } from "../utils/functions/ffmpegArgs.js";
 import { formatBoldPrefixedCommand } from "../utils/functions/formatCodeSpan.js";
+import { formatMarkdownLink } from "../utils/functions/formatMarkdownLink.js";
 import { getEffectivePrefix } from "../utils/functions/getEffectivePrefix.js";
 import { i18n__mf } from "../utils/functions/i18n.js";
 import { checkQuery, play, searchTrack } from "../utils/handlers/GeneralUtil.js";
@@ -212,7 +213,7 @@ export class ServerQueue {
                                     createEmbed(
                                         "info",
                                         `⏹️ **|** ${__mf("utils.generalHandler.stopPlaying", {
-                                            song: `**[${song.song.title}](${song.song.url})**`,
+                                            song: `**${formatMarkdownLink(song.song.title, song.song.url)}**`,
                                         })}`,
                                     ).setThumbnail(
                                         typeof song.song.thumbnail === "string" &&
@@ -899,7 +900,7 @@ export class ServerQueue {
                         createEmbed(
                             "info",
                             `▶️ **|** ${__mf("utils.generalHandler.startPlaying", {
-                                song: `**[${newSong.title}](${newSong.url})**`,
+                                song: `**${formatMarkdownLink(newSong.title, newSong.url)}**`,
                             })}`,
                         ).setThumbnail(thumb),
                     ],

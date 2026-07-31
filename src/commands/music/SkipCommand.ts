@@ -9,6 +9,7 @@ import { type Rawon } from "../../structures/Rawon.js";
 import { type QueueSong } from "../../typings/index.js";
 import { haveQueue, inVC, sameVC, useRequestChannel } from "../../utils/decorators/MusicUtil.js";
 import { createEmbed } from "../../utils/functions/createEmbed.js";
+import { formatMarkdownLink } from "../../utils/functions/formatMarkdownLink.js";
 import { i18n__, i18n__mf } from "../../utils/functions/i18n.js";
 import { OperationManager } from "../../utils/structures/OperationManager.js";
 
@@ -136,7 +137,7 @@ export class SkipCommand extends ContextCommand {
                     createEmbed(
                         "success",
                         `⏭️ **|** ${__mf("commands.music.skip.skipMessage", {
-                            song: `**[${song.song.title}](${song.song.url})**`,
+                            song: `**${formatMarkdownLink(song.song.title, song.song.url)}**`,
                         })}`,
                     ).setThumbnail(song.song.thumbnail),
                 ],
