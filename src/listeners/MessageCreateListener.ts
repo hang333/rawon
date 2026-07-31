@@ -529,7 +529,7 @@ export class MessageCreateListener extends Listener<typeof Events.MessageCreate>
             return;
         }
 
-        this.container.logger.info(
+        this.container.logger.debug(
             `[MultiBot] ${client.user?.tag} PROCESSING voice channel ${voiceChannel.id} (${voiceChannel.name}) for request from ${message.author.tag}`,
         );
 
@@ -566,7 +566,7 @@ export class MessageCreateListener extends Listener<typeof Events.MessageCreate>
             (existingQueueChannel !== undefined && existingQueueChannel !== voiceChannel.id)
         ) {
             if (guild.queue && existingQueueChannel !== voiceChannel.id) {
-                this.container.logger.info(
+                this.container.logger.debug(
                     `[MultiBot] ${client.user?.tag} destroying queue for channel ${existingQueueChannel} to create new queue for channel ${voiceChannel.id}`,
                 );
                 await guild.queue.destroy();
@@ -585,7 +585,7 @@ export class MessageCreateListener extends Listener<typeof Events.MessageCreate>
             try {
                 const adapterCreator = createVoiceAdapter(client, guild.id);
 
-                this.container.logger.info(
+                this.container.logger.debug(
                     `[MultiBot] ${client.user?.tag} creating voice connection for channel ${voiceChannel.id} (${voiceChannel.name}) using custom adapter`,
                 );
 
